@@ -7,17 +7,44 @@
 //
 
 import UIKit
+import Firebase
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, CLLocationManagerDelegate {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+    var locationManager = CLLocationManager()
+    var currentLocation: CLLocation?
+    
+    @IBOutlet weak var nameTextField: UITextField!
+    
+    @IBAction func saveButtonTapped(sender: UIButton) {
+        if let name = nameTextField.text {
+//            let location = self.currentLocation!
+            let location = CLLocation(latitude: 40.9, longitude: -111.8)
+            ModelObjectController.createObject(name, location: location, completion: { (error) -> Void in
+                if let _ = error {
+                    print("Error")
+                } else {
+                    print("Success")
+                }
+            })
+        }
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    
+    // MARK: view Functions
+    override func viewDidLoad() {
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+    }
+    
+    // MARK: CLLocationManagerDelegate
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.first {
+            print(location)
+            self.currentLocation = location
+            print(self.currentLocation)
+        }
     }
 
 
